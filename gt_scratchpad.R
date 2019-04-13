@@ -41,6 +41,33 @@ table1 <- sp500 %>%
 table1
 
 
+table1 %>% tab_options(
+        heading.background.color = "#3366ff"
+)
+
+table1 %>% tab_style(style = cells_styles(text_color = "#ff4d94"), 
+                     locations = cells_title(groups = "title")) %>%
+        tab_style(style = cells_styles(text_color = "#ff4d94"), 
+                  locations = cells_title(groups = "subtitle"))
+
+table1 %>% tab_style(style = cells_styles(bkgd_color = "#3366ff"),
+                     locations = cells_column_labels(columns = everything())) 
+
+
+###########
+
+
+gtcars %>% glimpse()
+gtcars %>% select(model, year, hp, trq) %>% slice(1:8) %>%
+        gt() %>% tab_header(title = "gtcars table") %>%
+        tab_style(style = cells_styles(text_font = "Georgia"), locations = cells_title(groups = "title")) %>%
+        tab_style(style = cells_styles(bkgd_color = "#3366ff", text_color = "#ffffff", text_font = "Georgia"),
+                           locations = cells_column_labels(columns = everything())) %>%
+        tab_style(style = cells_styles(text_font = "Georgia"),
+                  locations = cells_data(columns = everything()))
+
+
+
 ########################################################################################
 
 
@@ -103,6 +130,8 @@ tab_rtf <-
 tab_rtf %>% cat()
 
 
+
+############################################################
 
 
 

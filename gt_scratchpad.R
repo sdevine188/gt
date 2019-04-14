@@ -64,7 +64,11 @@ gtcars %>% select(model, year, hp, trq) %>% slice(1:8) %>%
         tab_style(style = cells_styles(bkgd_color = "#3366ff", text_color = "#ffffff", text_font = "Georgia"),
                            locations = cells_column_labels(columns = everything())) %>%
         tab_style(style = cells_styles(text_font = "Georgia"),
-                  locations = cells_data(columns = everything()))
+                  locations = cells_data(columns = everything())) %>%
+        # note there is no locations function to target footers and source_notes with styles
+        # but you can use md() and html() to style them when adding them 
+        tab_source_note(source_note = html("<p style = 'font-family:georgia,garamond,serif;'>Source: Database</p>"))
+     
 
 
 

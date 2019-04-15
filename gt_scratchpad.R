@@ -58,18 +58,59 @@ table1 %>% tab_style(style = cells_styles(bkgd_color = "#3366ff"),
 
 
 gtcars %>% glimpse()
-gtcars %>% select(model, year, hp, trq) %>% slice(1:8) %>%
+tab1 <- gtcars %>% select(model, year, hp, trq) %>% slice(1:8) %>% 
+        # rename("year<sup>a</sup>" = year) %>%
         gt() %>% tab_header(title = "gtcars table") %>%
         tab_style(style = cells_styles(text_font = "Georgia"), locations = cells_title(groups = "title")) %>%
-        tab_style(style = cells_styles(bkgd_color = "#3366ff", text_color = "#ffffff", text_font = "Georgia"),
-                           locations = cells_column_labels(columns = everything())) %>%
+        
+        # note that there is no way at present to get formatted superscript on column name
+        # even tab_footer, which will put numeric superscript, won't accept any formatting
+        # tab_style(style = cells_styles(bkgd_color = "#3366ff", text_color = "#ffffff", text_font = "Georgia"),
+        #                    locations = cells_column_labels(columns = everything())) %>%
+        tab_footnote(footnote = "test footnote", locations = cells_column_labels(columns = vars(year))) %>%
+        # tab_style(style = cells_styles(bkgd_color = "#3366ff", text_color = "#ffffff", text_font = "Georgia"),
+        #           locations = cells_column_labels(columns = c(1, 2, 3))) %>%
         tab_style(style = cells_styles(text_font = "Georgia"),
                   locations = cells_data(columns = everything())) %>%
-        # note there is no locations function to target footers and source_notes with styles
+       
+         # note there is no locations function to target footers and source_notes with styles
         # but you can use md() and html() to style them when adding them 
-        tab_source_note(source_note = html("<p style = 'font-family:georgia,garamond,serif;'>Source: Database</p>"))
-     
+        tab_source_note(source_note = html("<p style = 'font-family:georgia,garamond,serif;'>
+                                           <sup>a</sup>Source: Database<sub>b</sub></p>")) %>%
+        
+        # note that text_transform only works on cells_data (per github issue response)
+        # text_transform(locations = cells_column_labels(columns = vars(year)),
+        #         fn = function(x) {
+        #                 str_c("year_test")
+        #         }
+        # ) %>%
+        text_transform(locations = cells_data(columns = vars(year)),
+                       fn = function(x) {
+                               str_c("year_test")
+                       }
+        ) %>%
+        identity()
 
+
+# for some reason i cant get text_transform to work on column names
+attributes(tab1)
+attributes(tab1)$col_labels$year <- "year_test"
+attributes(tab1)$data_df <- attributes(tab1)$data_df %>% rename(year_test = year)
+attributes(tab1)$cols_df <- attributes(tab1)$cols_df %>% 
+        mutate(colnames_start = case_when(colnames_start == "year" ~ "year_test", TRUE ~ colnames_start))
+# attributes(tab1)$boxh_df <- attributes(tab1)$boxh_df %>% rename(year_test = year)
+attributes(tab1)$names <- case_when(attributes(tab1)$names == "year" ~ "year_test", TRUE ~ attributes(tab1)$names)
+
+tab1 %>% tab_style(style = cells_styles(bkgd_color = "#3366ff", text_color = "#ffffff", text_font = "Georgia"),
+                   locations = cells_column_labels(columns = everything()))
+
+attributes(tab1)$col_labels$year
+attributes(tab1)$data_df
+attributes(tab1)$cols_df
+attributes(tab1)$boxh_df
+attributes(tab1)$names
+attributes(tab1)$spec
+tab1
 
 
 ########################################################################################
